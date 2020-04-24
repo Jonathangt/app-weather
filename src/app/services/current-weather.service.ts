@@ -47,9 +47,6 @@ export class CurrentWeatherService {
     if(isDevMode()){
       url = 'assets/weather.json';
     }
-    
     this.http.get(url).subscribe(this.weatherSubject);
-
-  
   } 
 }

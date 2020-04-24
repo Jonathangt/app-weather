@@ -1,3 +1,4 @@
+import { ForecastService } from './services/forecast.service';
 import { Component } from '@angular/core';
 
 @Component({
@@ -7,11 +8,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'weather';
-  constructor(){
+  constructor(private forecastService: ForecastService){
 
   }
 
   ngOnInit(){
-    
+    this.forecastService.weather$.subscribe(console.log);
   }
 }
