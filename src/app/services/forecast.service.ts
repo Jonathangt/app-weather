@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Subject, Observable} from 'rxjs';
 import { environment } from '../../environments/environment';
 import { map } from 'rxjs/operators';
+import { GeolocationService } from './geolocation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,19 +13,19 @@ import { map } from 'rxjs/operators';
 export class ForecastService {
 
   public weatherSubject: Subject<any> = new Subject<any>();
-  public weather$: Observable<any> = this.weatherSubject.asObservable();
+  /*public weather$: Observable<any> = this.weatherSubject.asObservable();*/
+  public weather$: Observable<any>;
 
   endpoint: string = 'https://api.openweathermap.org/data/2.5/forecast';
 
-  constructor(private http: HttpClient) {
-    this.weather$ = this.weatherSubject.asObservable().pipe(map(this.structureDate));
-    this.get({
-      lat: -2.170998,
-      lon: -79.922356
+  constructor(private http: HttpClient, private geolocationService : GeolocationService) {
+    this.weather$ = this.weatherSubject.asObservable().pipe(map(this.structureData));
+    this.geolocationService.coords$.subscribe((coords)=>{
+      this.get(coords);
     });
   }
 
-  structureDate(data: any){
+  structureData(data: any){
 
     let minMaxPerDay = {};
 
@@ -70,6 +71,7 @@ export class ForecastService {
     let args: string = `?lat=${coords.lat}&lon=${coords.lon}&APPID=${environment.key}&units=metric`;
     let url =  this.endpoint + args;
 
+    /*Condicion para modo desarrollo */
     if(isDevMode()){
       url = 'assets/forecast.json';
     }
